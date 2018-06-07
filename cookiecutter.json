@@ -2,6 +2,7 @@
     "author_name": "John Doe",
     "author_email": "opensource@twitter.com",
     "project_slug": "project_name",
+    "short_description": "A short description of the project to go in the readme",
     "project_homepage": "none",
     "documentation_homepage": "none",
     "mailing_list": "none",
