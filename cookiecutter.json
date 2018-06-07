@@ -2,5 +2,8 @@
     "author_name": "John Doe",
     "author_email": "opensource@twitter.com",
     "project_slug": "project_name",
+    "project_homepage": "none",
+    "documentation_homepage": "none",
+    "mailing_list": "none",
     "release_year": 2018
 }
