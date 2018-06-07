@@ -4,15 +4,9 @@
 
 # Getting Started
 
-{% if cookiecutter.project_homepage != "none" %}
- * Website: {{ cookiecutter.project_homepage }}
-{% endif %}
-{% if cookiecutter.documentation_homepage != "none" %}
- * Documentation: {{ cookiecutter.documentation_homepage }}
-{% endif %}
-{% if cookiecutter.mailing_list != "none" %}
- * Mailing List: {{ cookiecutter.mailing_list }}
-{% endif %}
+{% if cookiecutter.project_homepage != "none" %} * Website: {{ cookiecutter.project_homepage }} {% endif %}
+{% if cookiecutter.documentation_homepage != "none" %} * Documentation: {{ cookiecutter.documentation_homepage }} {% endif %}
+{% if cookiecutter.mailing_list != "none" %} * Mailing List: {{ cookiecutter.mailing_list }} {% endif %}
 
 # Contributing
 
