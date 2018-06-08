@@ -1,3 +1,5 @@
+# NOTE: Modify sections marked with `TODO` and then rename the file.
+
 # {{ cookiecutter.project_slug }}
 
 {{ cookiecutter.short_description }}

@@ -1,3 +1,5 @@
+# NOTE: Modify sections marked with `TODO` and then rename the file.
+
 # How to Contribute
 
 We'd love to get patches from you!
