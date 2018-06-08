@@ -1,10 +1,11 @@
 {
-    "author_name": "John Doe",
+    "author_full_name": "@TwitterOSS",
     "author_email": "opensource@twitter.com",
     "project_slug": "project_name",
+    "github_repo_url": "twitter/repo_name",
     "short_description": "A short description of the project to go in the readme",
     "project_homepage": "none",
     "documentation_homepage": "none",
-    "mailing_list": "none",
+    "mailing_list": "opensource@twitter.com",
     "release_year": 2018
 }
