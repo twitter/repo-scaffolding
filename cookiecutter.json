@@ -1,0 +1,11 @@
+{
+    "author_full_name": "@TwitterOSS",
+    "author_email": "opensource@twitter.com",
+    "project_slug": "project_name",
+    "github_repo_url": "twitter/{{ cookiecutter.project_slug }}",
+    "short_description": "A short description of the project to go in the readme",
+    "project_homepage": "none",
+    "documentation_homepage": "none",
+    "mailing_list": "opensource@twitter.com",
+    "release_year": 2018
+}
