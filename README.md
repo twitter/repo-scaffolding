@@ -30,7 +30,7 @@ You can also run it locally after cloning this repository:
 
 `cookiecutter /path/to/directory/`
 
-See [documentaion](https://github.com/audreyr/cookiecutter#readme) for more usage instructions.
+See [documentation](https://github.com/audreyr/cookiecutter#readme) for more usage instructions.
 
 ## Inputs
 
