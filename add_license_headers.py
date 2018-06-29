@@ -177,13 +177,12 @@ The keys in MAP_LANGUAGE_TO_COMMENT_CHARS make an exhaustive list of the values 
 Please keep both of them in sync.
 
 The values in the list are the characters used to prepare the License Header as a comment block.
+
 First elemenet starts a block comment
 Second element is prepended to the lines in comment body
 Third element ends a block comment
 
-EXAMPLE (Scala):
-
-For a comment like this,
+EXAMPLE (Scala): For a comment like below
 
 /**
  * A
@@ -198,12 +197,12 @@ Set the following in MAP_LANGUAGE_TO_COMMENT_CHARS
 MAP_LANGUAGE_TO_COMMENT_CHARS = \
     {
         'ASP': ['', '\' ', ''],
-        'Ada': [],
-        'ApacheConf': [],
+        'Ada': [], # TODO
+        'ApacheConf': [], # TODO
         'AppleScript': ['', '-- ', ''],
-        'Arduino': [],
+        'Arduino': [], # TODO
         'Assembly': ['', '; ', ''],
-        'Brainfuck': [],
+        'Brainfuck': [], # TODO
         'C': ['/*', ' *', ' */'],
         'C#': ['/*', '  ', '*/'],
         'C++': ['/*', ' *', ' */'],
@@ -212,56 +211,56 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Clojure': ['', '; ', ''],
         'CoffeeScript': ['###', '', '###'],
         'Common Lisp': ['', '; ', ''],
-        'Cuda': [],
+        'Cuda': [], # TODO
         'Cython': ['"""', '', '"""'],
-        'Diff': [],
-        'Elm': [],
+        'Diff': [], # TODO
+        'Elm': [], # TODO
         'Emacs Lisp': ['', '; ', ''],
-        'FORTRAN': [],
+        'FORTRAN': [], # TODO
         'Go': ['', '//', ''],
         'HTML': ['<!-- ', '', ' --!>'],
         'HTML+Django': ['<!-- ', '', ' --!>'],
         'HTML+ERB': ['<!-- ', '', ' --!>'],
         'HTML+PHP': ['<!-- ', '', ' --!>'],
-        'HTTP': [],
+        'HTTP': [], # TODO
         'Haskell': ['', '-- ', ''],
-        'Io': [],
+        'Io': [], # TODO
         'JSON': ['', '// ', ''],
         'Java': ['', '// ', ''],
         'Java Server Pages': ['', '// ', ''],
         'JavaScript': ['', '// ', ''],
         'Julia': ['###', '  ', '###'],
         'Kotlin': ['/**', ' * ', ' */'],
-        'LLVM': [],
+        'LLVM': [], # TODO
         'Less': ['/*', '', '*/'],
         'Lua': ['--[=====[', '', '--]=====]'],
         'Makefile': ['', '# ', ''],
         'Markdown': ['<!-- ', '', ' --!>'],
-        'Matlab': [],
-        'Nginx': [],
+        'Matlab': [], # TODO
+        'Nginx': [], # TODO
         'NumPy': ['"""', '', '"""'],
         'OCaml': ['(*', '', ' *)'],
         'Objective-C': ['', '// ', ''],
         'PHP': ['<!-- ', '', ' --!>'],
-        'Pascal': [],
+        'Pascal': [], # TODO
         'Perl': ['', '# ', ''],
         'Python': ['"""', '', '"""'],
-        'Python traceback': [],
+        'Python traceback': [], # TODO
         'R': ['', '# ', ''],
         'Ruby': ['', '# ', ''],
         'Rust': ['', '// ', ''],
         'SCSS': ['/*', '', '*/'],
         'SQL': ['', '-- ', ''],
-        'Sage': [],
+        'Sage': [], # TODO
         'Sass': ['/*', '', '*/'],
         'Scala': ['/**', ' * ', ' */'],
         'Shell': ['', '# ', ''],
         'TeX': ['', '% ', ''],
         'TypeScript': ['/**', '* ', '*/'],
-        'VimL': [],
-        'Visual Basic': [],
+        'VimL': [], # TODO
+        'Visual Basic': [], # TODO
         'XML': ['<!-- ', '', ' --!>'],
         'YAML': ['', '# ', ''],
         'reStructuredText': ['', '.. ', ''],
-        'xBase': []
+        'xBase': [], # TODO
     }
