@@ -2,18 +2,8 @@
 
 """
 Copyright 2018 Twitter, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
+Licensed under the Apache License, Version 2.0
 http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 """
 
 """
@@ -23,6 +13,23 @@ It is designed to be safe, so do not worry and try it out!
 Works with languages with nonempty value in MAP_LANGUAGE_TO_COMMENT_CHARS
 
 """
+
+
+import argparse
+import datetime
+import itertools
+import os
+
+
+"""
+The License Header
+"""
+LICENSE_HEADER = """
+Copyright {} Twitter, Inc.
+Licensed under the Apache License, Version 2.0
+http://www.apache.org/licenses/LICENSE-2.0
+""".format(datetime.datetime.now().year).split("\n")
+
 
 MAP_EXTENTION_TO_LANGUAGE = \
     {
@@ -88,7 +95,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.jinja': 'HTML+Django',
         '.jl': 'Julia',
         '.js': 'JavaScript',
-        '.json': 'JSON',
+        # '.json': 'JSON',
         '.jsp': 'Java Server Pages',
         '.jsx': 'JavaScript',
         '.kt': 'Kotlin',
@@ -103,7 +110,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.m': 'Objective-C',
         '.mak': 'Makefile',
         '.matlab': 'Matlab',
-        '.md': 'Markdown',
+        # '.md': 'Markdown',
         '.mkii': 'TeX',
         '.mkiv': 'TeX',
         '.mkvi': 'TeX',
@@ -111,7 +118,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.mm': 'Objective-C',
         '.mspec': 'Ruby',
         '.mustache': 'HTML+Django',
-        '.nginxconf': 'Nginx',
+        # '.nginxconf': 'Nginx',
         '.nqp': 'Perl',
         '.numpy': 'NumPy',
         '.pas': 'Pascal',
@@ -140,9 +147,9 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.rbuild': 'Ruby',
         '.rbw': 'Ruby',
         '.rbx': 'Ruby',
-        '.rest': 'reStructuredText',
+        # '.rest': 'reStructuredText',
         '.rs': 'Rust',
-        '.rst': 'reStructuredText',
+        # '.rst': 'reStructuredText',
         '.ru': 'Ruby',
         '.sage': 'Sage',
         '.sass': 'Sass',
@@ -166,10 +173,10 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.watchr': 'Ruby',
         '.wsgi': 'Python',
         '.xhtml': 'HTML',
-        '.xml': 'XML',
+        # '.xml': 'XML',
         '.xpy': 'Python',
-        '.yaml': 'YAML',
-        '.yml': 'YAML',
+        # '.yaml': 'YAML',
+        # '.yml': 'YAML',
     }
 
 """
@@ -203,7 +210,7 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Arduino': [], # TODO
         'Assembly': ['', '; ', ''],
         'Brainfuck': [], # TODO
-        'C': ['/*', ' *', ' */'],
+        'C': ['/*', ' * ', ' */'],
         'C#': ['/*', '  ', '*/'],
         'C++': ['/*', ' *', ' */'],
         'CMake': ['', '# ', ''],
@@ -218,10 +225,10 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Emacs Lisp': ['', '; ', ''],
         'FORTRAN': [], # TODO
         'Go': ['', '//', ''],
-        'HTML': ['<!-- ', '', ' --!>'],
-        'HTML+Django': ['<!-- ', '', ' --!>'],
-        'HTML+ERB': ['<!-- ', '', ' --!>'],
-        'HTML+PHP': ['<!-- ', '', ' --!>'],
+        'HTML': ['<!--', '', ' --!>'],
+        'HTML+Django': ['<!--', '', ' --!>'],
+        'HTML+ERB': ['<!--', '', ' --!>'],
+        'HTML+PHP': ['<!--', '', ' --!>'],
         'HTTP': [], # TODO
         'Haskell': ['', '-- ', ''],
         'Io': [], # TODO
@@ -235,13 +242,13 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Less': ['/*', '', '*/'],
         'Lua': ['--[=====[', '', '--]=====]'],
         'Makefile': ['', '# ', ''],
-        'Markdown': ['<!-- ', '', ' --!>'],
+        'Markdown': ['<!--', '', ' --!>'],
         'Matlab': [], # TODO
         'Nginx': [], # TODO
         'NumPy': ['"""', '', '"""'],
         'OCaml': ['(*', '', ' *)'],
         'Objective-C': ['', '// ', ''],
-        'PHP': ['<!-- ', '', ' --!>'],
+        'PHP': ['<!--', '', ' --!>'],
         'Pascal': [], # TODO
         'Perl': ['', '# ', ''],
         'Python': ['"""', '', '"""'],
@@ -259,8 +266,157 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'TypeScript': ['/**', '* ', '*/'],
         'VimL': [], # TODO
         'Visual Basic': [], # TODO
-        'XML': ['<!-- ', '', ' --!>'],
+        'XML': ['<!--', '', ' --!>'],
         'YAML': ['', '# ', ''],
         'reStructuredText': ['', '.. ', ''],
         'xBase': [], # TODO
     }
+
+
+"""
+Argument Parsing
+"""
+class FullPaths(argparse.Action):
+    """Expand user- and relative-paths"""
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, os.path.abspath(os.path.expanduser(values)))
+
+def is_dir(dirname):
+    """Checks if a path is an actual directory"""
+    if not os.path.isdir(dirname):
+        msg = "{0} is not a directory".format(dirname)
+        raise argparse.ArgumentTypeError(msg)
+    else:
+        return dirname
+
+
+parser = argparse.ArgumentParser(description="Recursively add license headers to source files")
+parser.add_argument('source_dir', help="Path to the root of the directory containing source files",
+    action=FullPaths, type=is_dir)
+args = parser.parse_args()
+print("LOG: Path detected :", args.source_dir)
+
+files_with_extensions = []
+
+for root, directories, filenames in os.walk(args.source_dir):
+    if ".git" in root.split("/"):
+        continue
+    for filename in filenames:
+        path_to_file = os.path.join(root, filename)
+        _, file_extension = os.path.splitext(path_to_file)
+        files_with_extensions.append((path_to_file, file_extension))
+
+# print("LOG: All the files")
+# for file in files_with_extensions:
+#     print('\t -', file[0][len(args.source_dir):])
+
+source_files = []
+not_source_files = []
+for file in files_with_extensions:
+    if file[1] in MAP_EXTENTION_TO_LANGUAGE:
+        source_files.append(file)
+    else:
+        not_source_files.append(file)
+
+print("LOG: Not making any changes to the following files. The script does not recognize them as a source file")
+for file in not_source_files:
+    print('\t -', file[0][len(args.source_dir):])
+
+print("LOG: All the source files")
+for file in source_files:
+    print('\t -', file[0][len(args.source_dir):])
+
+"""
+Detect if License Headers exist
+
+Check first 50 lines for keywords "Copyright" and "License" both.
+If found, remove the file from source_files
+"""
+files_with_headers = []
+files_without_headers = []
+for file in source_files:
+    with open(file[0]) as f:
+        first_50_lines = "".join([x.strip() for x in itertools.islice(f, 50)])
+    first_50_lines = first_50_lines.lower()
+    if "copyright" in first_50_lines and "license" in first_50_lines:
+        files_with_headers.append(file)
+    else:
+        files_without_headers.append(file)
+
+print("LOG: Found {} source file(s) with existing License headers".format(len(files_with_headers)))
+for file in files_with_headers:
+    print("\t", file[0][len(args.source_dir):])
+
+# Mention all the languages and their comment characters
+languages = {}
+# key: Language Name
+# value: list of files
+
+for file in files_without_headers:
+    lang = MAP_EXTENTION_TO_LANGUAGE[file[1]]
+    try:
+        languages[lang].append(file)
+    except KeyError:
+        languages[lang] = [file]
+
+
+"""
+Prepare comment block for each language
+"""
+map_language_to_block_comment = {}
+
+for lang in languages:
+    try:
+        characters = MAP_LANGUAGE_TO_COMMENT_CHARS[lang]
+    except KeyError:
+        print("ERROR: Language '{}' not found in MAP_LANGUAGE_TO_COMMENT_CHARS. Please Keep both dictionaries in sync".format(lang))
+        continue
+
+    if len(characters) != 3:
+        print("ERROR: Language '{}' does not have the required 3 block comment characters. Check MAP_LANGUAGE_TO_COMMENT_CHARS".format(lang))
+        continue
+
+    comments = []
+    comments.append(characters[0] + LICENSE_HEADER[0])
+    for line in LICENSE_HEADER[1:-1]:
+        comments.append(characters[1] + line)
+    comments.append(characters[-1] + LICENSE_HEADER[-1])
+
+    map_language_to_block_comment[lang] = "\n".join(comments)
+
+if map_language_to_block_comment:
+    print("LOG: List of languages and their block comments\n")
+    for lang in map_language_to_block_comment:
+        print(lang, "\n")
+        print(map_language_to_block_comment[lang], "\n")
+
+
+"""
+Make the changes
+
+Exceptional cases:
+    - If the first two bytes of the file are "#!", skip the first line
+"""
+for file in files_without_headers:
+    with open(file[0]) as f:
+        file_text = f.read()
+    lang = MAP_EXTENTION_TO_LANGUAGE[file[1]]
+    comment = map_language_to_block_comment[lang]
+
+    new_file_text = ""
+
+    if file_text[:2] == "#!":
+        lines = file_text.split("\n", 1)
+        lines.insert(1, comment)
+        new_file_text = "\n".join(lines)
+    else:
+        new_file_text = comment + "\n" + file_text
+    with open(file[0], 'w') as f:
+        f.write(new_file_text)
+
+
+"""
+Finished!
+"""
+print("LOG: Finished! Make sure to run `git diff` and verify the diff")
+print("You can do `git checkout -- .` to revert all the unstaged changes")
