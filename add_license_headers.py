@@ -18,8 +18,10 @@ Works with languages with nonempty value in MAP_LANGUAGE_TO_COMMENT_CHARS
 import argparse
 import datetime
 import itertools
+import logging
 import os
 import sys
+import tempfile
 
 
 """
@@ -295,7 +297,7 @@ parser = argparse.ArgumentParser(description="Recursively add license headers to
 parser.add_argument('source_dir', help="Path to the root of the directory containing source files",
     action=FullPaths, type=is_dir)
 args = parser.parse_args()
-print("LOG: Path detected :", args.source_dir, "\n")
+print("Path detected :", args.source_dir, "\n")
 
 
 """
@@ -335,7 +337,14 @@ def query_yes_no(question, default="yes"):
 
 
 """
+Enable logging to the log file
 """
+f = tempfile.NamedTemporaryFile(delete=False, suffix=".log")
+f.close()
+LOG_FILENAME = f.name
+
+logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, format="%(message)s")
+
 print("Please make sure that the source directory is tracked by a version control like git.")
 print("Also make sure you do not have any uncommitted changes in your repository.")
 print("It will later enable you to run 'git checkout -- .' and revert all the changes made by this script.")
@@ -360,11 +369,11 @@ for file in files_with_extensions:
     else:
         not_source_files.append(file)
 
-# print("LOG: Not making any changes to the following files. The script does not recognize them as a source file")
-# for file in not_source_files:
-#     print('\t -', file[0][len(args.source_dir):])
+logging.info("Not making any changes to the following files. The script does not recognize them as a source file")
+for file in not_source_files:
+    logging.info('\t - ' + file[0][len(args.source_dir):])
 
-# print("LOG: All the source files")
+# print("All the source files")
 # for file in source_files:
 #     print('\t -', file[0][len(args.source_dir):])
 
@@ -385,11 +394,16 @@ for file in source_files:
     else:
         files_without_headers.append(file)
 
-# print("LOG: Found {} source file(s) with existing License headers".format(len(files_with_headers)))
-# for file in files_with_headers:
-#     print("\t", file[0][len(args.source_dir):])
+print("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
+logging.info("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
+for file in files_with_headers:
+    logging.info("\t " + file[0][len(args.source_dir):])
 
-# Mention all the languages and their comment characters
+
+"""
+Prepare comment block for each language
+"""
+
 languages = {}
 # key: Language Name
 # value: list of files
@@ -402,9 +416,6 @@ for file in files_without_headers:
         languages[lang] = [file]
 
 
-"""
-Prepare comment block for each language
-"""
 map_language_to_block_comment = {}
 
 for lang in languages:
@@ -427,10 +438,10 @@ for lang in languages:
     map_language_to_block_comment[lang] = "\n".join(comments)
 
 if map_language_to_block_comment:
-    print("LOG: List of languages and their block comments\n")
+    logging.info("\n\nList of languages and their block comments\n")
     for lang in map_language_to_block_comment:
-        print(lang, "\n")
-        print(map_language_to_block_comment[lang], "\n")
+        logging.info(lang + "\n")
+        logging.info(map_language_to_block_comment[lang] + "\n")
 
 
 """
@@ -456,9 +467,13 @@ for file in files_without_headers:
     with open(file[0], 'w') as f:
         f.write(new_file_text)
 
+print("Made changes to {} file(s)".format(len(files_without_headers)))
+logging.info("Made changes to {} file(s)".format(len(files_without_headers)))
 
 """
 Finished!
 """
-print("LOG: Finished! Make sure to run `git diff` and verify the diff")
+print("\nFinished running the script! Make sure to run `git diff` in the directory and verify the diff")
 print("You can do `git checkout -- .` to revert all the unstaged changes")
+print("`git checkout -- <path>` can also undo a specific file or multiple files in a directory")
+print("Check the log file!", LOG_FILENAME)
