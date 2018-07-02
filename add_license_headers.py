@@ -19,6 +19,7 @@ import argparse
 import datetime
 import itertools
 import os
+import sys
 
 
 """
@@ -294,7 +295,52 @@ parser = argparse.ArgumentParser(description="Recursively add license headers to
 parser.add_argument('source_dir', help="Path to the root of the directory containing source files",
     action=FullPaths, type=is_dir)
 args = parser.parse_args()
-print("LOG: Path detected :", args.source_dir)
+print("LOG: Path detected :", args.source_dir, "\n")
+
+
+"""
+Utility functions
+"""
+def query_yes_no(question, default="yes"):
+    """Ask a yes/no question via input() and return their answer.
+
+    "question" is a string that is presented to the user.
+    "default" is the presumed answer if the user just hits <Enter>.
+        It must be "yes" (the default), "no" or None (meaning
+        an answer is required of the user).
+
+    The "answer" return value is True for "yes" or False for "no".
+    """
+    valid = {"yes": True, "y": True, "ye": True,
+             "no": False, "n": False}
+    if default is None:
+        prompt = " [y/n] "
+    elif default == "yes":
+        prompt = " [Y/n] "
+    elif default == "no":
+        prompt = " [y/N] "
+    else:
+        raise ValueError("invalid default answer: '%s'" % default)
+
+    while True:
+        sys.stdout.write(question + prompt)
+        choice = input().lower()
+        if default is not None and choice == '':
+            return valid[default]
+        elif choice in valid:
+            return valid[choice]
+        else:
+            sys.stdout.write("Please respond with 'yes' or 'no' "
+                             "(or 'y' or 'n').\n")
+
+
+"""
+"""
+print("Please make sure that the source directory is tracked by a version control like git.")
+print("Also make sure you do not have any uncommitted changes in your repository.")
+print("It will later enable you to run 'git checkout -- .' and revert all the changes made by this script.")
+if not query_yes_no("Proceed ahead?"):
+    sys.exit(1)
 
 files_with_extensions = []
 
@@ -306,10 +352,6 @@ for root, directories, filenames in os.walk(args.source_dir):
         _, file_extension = os.path.splitext(path_to_file)
         files_with_extensions.append((path_to_file, file_extension))
 
-# print("LOG: All the files")
-# for file in files_with_extensions:
-#     print('\t -', file[0][len(args.source_dir):])
-
 source_files = []
 not_source_files = []
 for file in files_with_extensions:
@@ -318,13 +360,13 @@ for file in files_with_extensions:
     else:
         not_source_files.append(file)
 
-print("LOG: Not making any changes to the following files. The script does not recognize them as a source file")
-for file in not_source_files:
-    print('\t -', file[0][len(args.source_dir):])
+# print("LOG: Not making any changes to the following files. The script does not recognize them as a source file")
+# for file in not_source_files:
+#     print('\t -', file[0][len(args.source_dir):])
 
-print("LOG: All the source files")
-for file in source_files:
-    print('\t -', file[0][len(args.source_dir):])
+# print("LOG: All the source files")
+# for file in source_files:
+#     print('\t -', file[0][len(args.source_dir):])
 
 """
 Detect if License Headers exist
@@ -343,9 +385,9 @@ for file in source_files:
     else:
         files_without_headers.append(file)
 
-print("LOG: Found {} source file(s) with existing License headers".format(len(files_with_headers)))
-for file in files_with_headers:
-    print("\t", file[0][len(args.source_dir):])
+# print("LOG: Found {} source file(s) with existing License headers".format(len(files_with_headers)))
+# for file in files_with_headers:
+#     print("\t", file[0][len(args.source_dir):])
 
 # Mention all the languages and their comment characters
 languages = {}
