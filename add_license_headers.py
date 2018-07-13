@@ -21,6 +21,8 @@ import itertools
 import logging
 import os
 import sys
+import shutil
+import subprocess
 import tempfile
 
 
@@ -34,6 +36,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 """.format(datetime.datetime.now().year).split("\n")
 
 
+# Comment out non-source extensions e.g. .md
 MAP_EXTENTION_TO_LANGUAGE = \
     {
         '.C': 'C++',
@@ -293,15 +296,8 @@ def is_dir(dirname):
         return dirname
 
 
-parser = argparse.ArgumentParser(description="Recursively add license headers to source files")
-parser.add_argument('source_dir', help="Path to the root of the directory containing source files",
-    action=FullPaths, type=is_dir)
-args = parser.parse_args()
-print("Path detected :", args.source_dir, "\n")
-
-
 """
-Utility functions
+Utility
 """
 def query_yes_no(question, default="yes"):
     """Ask a yes/no question via input() and return their answer.
@@ -336,144 +332,223 @@ def query_yes_no(question, default="yes"):
                              "(or 'y' or 'n').\n")
 
 
-"""
-Enable logging to the log file
-"""
-f = tempfile.NamedTemporaryFile(delete=False, suffix=".log")
-f.close()
-LOG_FILENAME = f.name
-
-logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, format="%(message)s")
-
-print("Please make sure that the source directory is tracked by a version control like git.")
-print("Also make sure you do not have any uncommitted changes in your repository.")
-print("It will later enable you to run 'git checkout -- .' and revert all the changes made by this script.")
-if not query_yes_no("Proceed ahead?"):
-    sys.exit(1)
-
-files_with_extensions = []
-
-for root, directories, filenames in os.walk(args.source_dir):
-    if ".git" in root.split("/"):
-        continue
-    for filename in filenames:
-        path_to_file = os.path.join(root, filename)
-        _, file_extension = os.path.splitext(path_to_file)
-        files_with_extensions.append((path_to_file, file_extension))
-
-source_files = []
-not_source_files = []
-for file in files_with_extensions:
-    if file[1] in MAP_EXTENTION_TO_LANGUAGE:
-        source_files.append(file)
-    else:
-        not_source_files.append(file)
-
-logging.info("Not making any changes to the following files. The script does not recognize them as a source file")
-for file in not_source_files:
-    logging.info('\t - ' + file[0][len(args.source_dir):])
-
-# print("All the source files")
-# for file in source_files:
-#     print('\t -', file[0][len(args.source_dir):])
-
-"""
-Detect if License Headers exist
-
-Check first 50 lines for keywords "Copyright" and "License" both.
-If found, remove the file from source_files
-"""
-files_with_headers = []
-files_without_headers = []
-for file in source_files:
-    with open(file[0]) as f:
-        first_50_lines = "".join([x.strip() for x in itertools.islice(f, 50)])
-    first_50_lines = first_50_lines.lower()
-    if "copyright" in first_50_lines and "license" in first_50_lines:
-        files_with_headers.append(file)
-    else:
-        files_without_headers.append(file)
-
-print("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
-logging.info("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
-for file in files_with_headers:
-    logging.info("\t " + file[0][len(args.source_dir):])
+class color(object):
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
 
 
-"""
-Prepare comment block for each language
-"""
+def apply_changes(source_path, skip_log=False):
+    files_with_extensions = []
 
-languages = {}
-# key: Language Name
-# value: list of files
+    for root, directories, filenames in os.walk(source_path):
+        if ".git" in root.split("/"):
+            continue
+        for filename in filenames:
+            path_to_file = os.path.join(root, filename)
+            _, file_extension = os.path.splitext(path_to_file)
+            files_with_extensions.append((path_to_file, file_extension))
 
-for file in files_without_headers:
-    lang = MAP_EXTENTION_TO_LANGUAGE[file[1]]
+    source_files = []
+    not_source_files = []
+    for file in files_with_extensions:
+        if file[1] in MAP_EXTENTION_TO_LANGUAGE:
+            source_files.append(file)
+        else:
+            not_source_files.append(file)
+
+    if not skip_log:
+        logging.info("Not making any changes to the following files. The script does not recognize them as a source file")
+        for file in not_source_files:
+            logging.info('\t - ' + file[0][len(source_path):])
+
+    # print("All the source files")
+    # for file in source_files:
+    #     print('\t -', file[0][len(source_path):])
+
+    """
+    Detect if License Headers exist
+
+    Check first 50 lines for keywords "Copyright" and "License" both.
+    If found, remove the file from source_files
+    """
+    files_with_headers = []
+    files_without_headers = []
+    for file in source_files:
+        with open(file[0]) as f:
+            first_50_lines = "".join([x.strip() for x in itertools.islice(f, 50)])
+        first_50_lines = first_50_lines.lower()
+        if "copyright" in first_50_lines and "license" in first_50_lines:
+            files_with_headers.append(file)
+        else:
+            files_without_headers.append(file)
+
+    if not skip_log:
+        print("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
+        logging.info("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
+        for file in files_with_headers:
+            logging.info("\t " + file[0][len(source_path):])
+
+
+    """
+    Prepare comment block for each language
+    """
+
+    languages = {}
+    # key: Language Name
+    # value: list of files
+
+    for file in files_without_headers:
+        lang = MAP_EXTENTION_TO_LANGUAGE[file[1]]
+        try:
+            languages[lang].append(file)
+        except KeyError:
+            languages[lang] = [file]
+
+
+    map_language_to_block_comment = {}
+
+    for lang in languages:
+        try:
+            characters = MAP_LANGUAGE_TO_COMMENT_CHARS[lang]
+        except KeyError:
+            print("ERROR: Language '{}' not found in MAP_LANGUAGE_TO_COMMENT_CHARS. Please Keep both dictionaries in sync".format(lang))
+            continue
+
+        if len(characters) != 3:
+            print("ERROR: Language '{}' does not have the required 3 block comment characters. Check MAP_LANGUAGE_TO_COMMENT_CHARS".format(lang))
+            continue
+
+        comments = []
+        if characters[0] != "":
+            comments.append(characters[0] + LICENSE_HEADER[0])
+        for line in LICENSE_HEADER[1:-1]:
+            comments.append(characters[1] + line)
+        comments.append(characters[-1] + LICENSE_HEADER[-1])
+
+        map_language_to_block_comment[lang] = "\n".join(comments)
+
+    if map_language_to_block_comment and not skip_log:
+        logging.info("\n\nList of languages and their block comments\n")
+        for lang in map_language_to_block_comment:
+            logging.info(lang + "\n")
+            logging.info(map_language_to_block_comment[lang] + "\n")
+
+
+    """
+    Make the changes
+
+    Exceptional cases:
+        - If the first two bytes of the file are "#!", skip the first line
+    """
+    for file in files_without_headers:
+        with open(file[0]) as f:
+            file_text = f.read()
+        lang = MAP_EXTENTION_TO_LANGUAGE[file[1]]
+        comment = map_language_to_block_comment[lang]
+
+        new_file_text = ""
+
+        if file_text[:2] == "#!":
+            lines = file_text.split("\n", 1)
+            lines.insert(1, comment)
+            new_file_text = "\n".join(lines)
+        else:
+            new_file_text = comment + "\n" + file_text
+        with open(file[0], 'w') as f:
+            f.write(new_file_text)
+
+    if not skip_log:
+        print("{} source file(s) need to be updated".format(len(files_without_headers)))
+        logging.info("{} source file(s) need to be updated".format(len(files_without_headers)))
+
+
+def get_current_branch(path):
+    # Save current working directory
+    cur_dir = os.getcwd()
+    os.chdir(path)
+    cur_branch = ""
     try:
-        languages[lang].append(file)
-    except KeyError:
-        languages[lang] = [file]
+        output = subprocess.check_output(["git", "branch"]).decode("utf-8")
+        for line in output.split("\n"):
+            if line[:2] == "* ":
+                cur_branch = line[2:]
+                break
+    except Exception as e:
+        print("Error in get_current_branch function", e)
+        print("Are you the repository is tracked by git?")
+
+    return cur_branch
 
 
-map_language_to_block_comment = {}
+if __name__ == '__main__':
+    # Clear screen
+    os.system('clear')
 
-for lang in languages:
-    try:
-        characters = MAP_LANGUAGE_TO_COMMENT_CHARS[lang]
-    except KeyError:
-        print("ERROR: Language '{}' not found in MAP_LANGUAGE_TO_COMMENT_CHARS. Please Keep both dictionaries in sync".format(lang))
-        continue
-
-    if len(characters) != 3:
-        print("ERROR: Language '{}' does not have the required 3 block comment characters. Check MAP_LANGUAGE_TO_COMMENT_CHARS".format(lang))
-        continue
-
-    comments = []
-    comments.append(characters[0] + LICENSE_HEADER[0])
-    for line in LICENSE_HEADER[1:-1]:
-        comments.append(characters[1] + line)
-    comments.append(characters[-1] + LICENSE_HEADER[-1])
-
-    map_language_to_block_comment[lang] = "\n".join(comments)
-
-if map_language_to_block_comment:
-    logging.info("\n\nList of languages and their block comments\n")
-    for lang in map_language_to_block_comment:
-        logging.info(lang + "\n")
-        logging.info(map_language_to_block_comment[lang] + "\n")
+    """
+    Parse arguments
+    """
+    parser = argparse.ArgumentParser(description="Recursively add license headers to source files")
+    parser.add_argument('source_dir', help="Path to the root of the directory containing source files",
+        action=FullPaths, type=is_dir)
+    args = parser.parse_args()
+    print("Path detected :", color.BOLD + args.source_dir + color.END)
+    current_branch = get_current_branch(args.source_dir)
+    if current_branch:
+        print("Branch detected -", color.BOLD + current_branch, color.END, "\n")
 
 
-"""
-Make the changes
+    """
+    Enable logging to a file
+    """
+    # f = tempfile.NamedTemporaryFile(delete=False, suffix=".log")
+    # f.close()
+    # LOG_FILENAME = f.name
+    LOG_FILENAME = "header-" + datetime.datetime.now().isoformat() + ".log"
 
-Exceptional cases:
-    - If the first two bytes of the file are "#!", skip the first line
-"""
-for file in files_without_headers:
-    with open(file[0]) as f:
-        file_text = f.read()
-    lang = MAP_EXTENTION_TO_LANGUAGE[file[1]]
-    comment = map_language_to_block_comment[lang]
+    logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, format="%(message)s")
 
-    new_file_text = ""
+    print(color.YELLOW + "* Please make sure that the source directory is tracked by git.")
+    print("* Create a new branch before proceeding ahead.")
+    print("* Make sure you do not have any uncommitted changes in your repository.")
+    print("It will later enable you to run 'git checkout -- .' and revert all the changes made by this script." + color.END)
+    if not query_yes_no("Proceed ahead? (Don't worry, this won't make changes yet)", default="no"):
+        print("Aborted!")
+        sys.exit(1)
 
-    if file_text[:2] == "#!":
-        lines = file_text.split("\n", 1)
-        lines.insert(1, comment)
-        new_file_text = "\n".join(lines)
-    else:
-        new_file_text = comment + "\n" + file_text
-    with open(file[0], 'w') as f:
-        f.write(new_file_text)
 
-print("Made changes to {} file(s)".format(len(files_without_headers)))
-logging.info("Made changes to {} file(s)".format(len(files_without_headers)))
+    """
+    Make a temporary copy of the source directory and make changes there
+    """
+    tempdir = tempfile.mkdtemp()
+    shutil.rmtree(tempdir)  # shutil.copytree mandates the destination to not exist
+    print(color.BOLD, "\nCreating a copy of the project at\n")
+    print("\t", color.GREEN, tempdir, color.END)
+    shutil.copytree(args.source_dir, tempdir)
 
-"""
-Finished!
-"""
-print("\nFinished running the script! Make sure to run `git diff` in the directory and verify the diff")
-print("You can do `git checkout -- .` to revert all the unstaged changes")
-print("`git checkout -- <path>` can also undo a specific file or multiple files in a directory")
-print("Check the log file!", LOG_FILENAME)
+    apply_changes(tempdir)
+
+    print(color.BOLD, "\nApplied changes to the copy of the project\n", color.END)
+    print("1. Make sure to run `git diff` in the following directory and verify the diff.\n")
+    print("\t$ cd", tempdir)
+    print("\t$ git diff\n")
+    print("2. Review the detailed log file - " + color.BOLD + os.getcwd() + "/" + LOG_FILENAME, color.END)
+    print("3. Run the unit tests and build the project.")
+    print("\nIf everything looks good in the copy of the project, proceed ahead.")
+    print("Changes will now be made to " + color.BOLD + args.source_dir + color.END)
+    if not query_yes_no("Want to continue?", default="no"):
+        print("Aborted!")
+        sys.exit(1)
+
+    apply_changes(args.source_dir, skip_log=True)
+
+    print(color.GREEN + "\nFinished running the script!")
+    print("You can do `git checkout -- .` to revert all the unstaged changes")
+    print("`git checkout -- <path>` can also undo a specific file or multiple files in a directory" + color.END)
