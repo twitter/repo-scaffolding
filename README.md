@@ -22,7 +22,7 @@ Run cookiecutter against this repository.
 
 or
 
-`cookiecutter gh:twitter/repo-scaffolding`    
+`cookiecutter gh:twitter/repo-scaffolding`
 
 or
 

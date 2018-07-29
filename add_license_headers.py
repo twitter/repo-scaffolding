@@ -487,11 +487,7 @@ def get_current_branch(path):
 
     return cur_branch
 
-
-if __name__ == '__main__':
-    # Clear screen
-    os.system('clear')
-
+def entry():
     """
     Parse arguments
     """
@@ -552,3 +548,10 @@ if __name__ == '__main__':
     print(color.GREEN + "\nFinished running the script!")
     print("You can do `git checkout -- .` to revert all the unstaged changes")
     print("`git checkout -- <path>` can also undo a specific file or multiple files in a directory" + color.END)
+
+
+if __name__ == '__main__':
+    # Clear screen
+    os.system('clear')
+
+    entry()
