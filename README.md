@@ -1,8 +1,12 @@
 # repo-scaffolding
 
+Scaffolding tools for Twitter Open Source projects.
+
+## 1. Cookiecutter
+
 A [cookiecutter](https://github.com/audreyr/cookiecutter) template to generate necessary files for a Twitter Open Source project.
 
-## Requirements
+### Requirements
 Install `cookiecutter` command line: `pip install cookiecutter`
 
 ---
@@ -14,7 +18,7 @@ brew install python
 Note: `cookiecutter` can be installed with both `pip` and `pip3`.
 
 
-## Usage
+### Usage
 
 Run cookiecutter against this repository.
 
@@ -32,7 +36,7 @@ You can also run it locally after cloning this repository:
 
 See [documentation](https://github.com/audreyr/cookiecutter#readme) for more usage instructions.
 
-## Inputs
+### Inputs
 
 See [cookiecutter.json](/cookiecutter.json) for all the variables required as input. Here is the list of places they are used
 
@@ -46,8 +50,39 @@ See [cookiecutter.json](/cookiecutter.json) for all the variables required as in
  - `mailing_list`: 1 time in `README.md`
  - `release_year`: 1 time in `LICENSE` and 1 time in `README.md`
 
-## Notes
+### Notes
  - Make sure to update the `TODO` sections in `README.md` and `CONTRIBUTING.md` after generating the files
+
+## 2. License Headers script
+
+A [script](add_license_headers.py) to add license headers to all the source files of a project. It is designed to be safe, so do not worry and try it out!
+
+## Installation
+
+```
+pip install git+git://github.com/twitter/repo-scaffolding
+```
+
+Or clone the repository and run
+```
+python setup.py install
+```
+
+## Usage
+```
+$ add_license_headers <path_to_source_dir>
+```
+
+## 3. Linting (repolinter)
+
+Lint all the necessary files in the project. - [Project Homepage](https://github.com/todogroup/repolinter)
+
+- To run against a directory, use `npx repolinter /my/code/dir`
+- To run against a git repository, use the --git option: `npx repolinter --git https://my.git.code/awesome`
+- Note, if you are running a version of npm < 5.2.0, run `npm install npx` first.
+
+
+---
 
 ## Authors
 
