@@ -2,7 +2,15 @@
 
 Scaffolding tools for Twitter Open Source projects.
 
-## 1. Cookiecutter
+The project has three parts as of now -
+
+1. [Cookiecutter template to generate OSS policy files](https://github.com/twitter/repo-scaffolding#1-cookiecutter)
+2. [Script to add License headers](https://github.com/twitter/repo-scaffolding#2-license-headers-script)
+3. [Linting (repolinter)](https://github.com/twitter/repo-scaffolding#3-linting-repolinter)
+
+---
+
+## 1. Cookiecutter template to generate OSS policy files
 
 A [cookiecutter](https://github.com/audreyr/cookiecutter) template to generate necessary files for a Twitter Open Source project.
 
