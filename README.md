@@ -1,12 +1,10 @@
 # repo-scaffolding
 
-Scaffolding tools for Twitter Open Source projects.
+Scaffolding tools for creating and maintaining projects based on Twitter Open Source standards and best practices. The project has 3 parts -
 
-The project has three parts as of now -
-
-1. [Cookiecutter template to generate OSS policy files](https://github.com/twitter/repo-scaffolding#1-cookiecutter)
-2. [Script to add License headers](https://github.com/twitter/repo-scaffolding#2-license-headers-script)
-3. [Linting (repolinter)](https://github.com/twitter/repo-scaffolding#3-linting-repolinter)
+1. [Cookiecutter template to generate Twitter OSS policy files e.g. LICENSE, CONTRIBUTING, etc.](https://github.com/twitter/repo-scaffolding#1-cookiecutter)
+2. [Script to add License headers to all source files in a project](https://github.com/twitter/repo-scaffolding#2-license-headers-script)
+3. [Lint a repository for common missing files (repolinter)](https://github.com/twitter/repo-scaffolding#3-linting-repolinter)
 
 ---
 
