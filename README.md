@@ -79,6 +79,9 @@ python setup.py install
 $ add_license_headers <path_to_source_dir>
 ```
 
+[![asciicast](https://asciinema.org/a/c6dofWtSSiXXFWRmiGiOYKTa6.png)](https://asciinema.org/a/c6dofWtSSiXXFWRmiGiOYKTa6)
+
+
 ## 3. Linting (repolinter)
 
 Lint all the necessary files in the project. - [Project Homepage](https://github.com/todogroup/repolinter)
