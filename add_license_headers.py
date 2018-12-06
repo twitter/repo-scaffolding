@@ -269,7 +269,7 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Scala': ['/**', ' * ', ' */'],
         'Shell': ['', '# ', ''],
         'TeX': ['', '% ', ''],
-        'TypeScript': ['/**', '* ', '*/'],
+        'TypeScript': ['/**', ' * ', '*/'],
         'VimL': [], # TODO
         'Visual Basic': [], # TODO
         'XML': ['<!--', '', ' --!>'],
