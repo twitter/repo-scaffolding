@@ -57,6 +57,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.bib': 'TeX',
         '.builder': 'Ruby',
         '.c': 'C',
+        '.cc': 'C++',
         '.c++': 'C++',
         '.clj': 'Clojure',
         '.cmake': 'CMake',
