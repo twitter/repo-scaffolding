@@ -63,15 +63,17 @@ See [cookiecutter.json](/cookiecutter.json) for all the variables required as in
 
 A [script](add_license_headers.py) to add license headers to all the source files of a project. It is designed to be safe, so do not worry and try it out!
 
+Note: The script works with Python 3.
+
 ## Installation
 
 ```
-pip install git+git://github.com/twitter/repo-scaffolding
+pip3 install git+git://github.com/twitter/repo-scaffolding
 ```
 
 Or clone the repository and run
 ```
-python setup.py install
+python3 setup.py install
 ```
 
 ## Usage
