@@ -16,10 +16,7 @@ A [cookiecutter](https://github.com/audreyr/cookiecutter) template to generate n
 Install `cookiecutter` command line: `pip install cookiecutter`
 
 ---
-`pip` is the package manager for Python. If you don't have pip, install Python.
-```
-brew install python
-```
+`pip` is the package manager for Python.
 
 Note: `cookiecutter` can be installed with both `pip` and `pip3`.
 
