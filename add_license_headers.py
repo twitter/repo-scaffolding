@@ -35,7 +35,6 @@ Licensed under the Apache License, Version 2.0
 http://www.apache.org/licenses/LICENSE-2.0
 """.format(datetime.datetime.now().year).split("\n")
 
-
 # Comment out non-source extensions e.g. .md
 MAP_EXTENTION_TO_LANGUAGE = \
     {
@@ -104,6 +103,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         # '.json': 'JSON',
         '.jsp': 'Java Server Pages',
         '.jsx': 'JavaScript',
+        '.jy': 'Jython',
         '.kt': 'Kotlin',
         '.ktm': 'Kotlin',
         '.kts': 'Kotlin',
@@ -161,6 +161,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.sass': 'Sass',
         '.scala': 'Scala',
         '.scss': 'SCSS',
+        '.sol': 'Solidity',
         '.sh': 'Shell',
         '.sql': 'SQL',
         '.sty': 'TeX',
@@ -243,6 +244,7 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Java Server Pages': ['', '// ', ''],
         'JavaScript': ['', '// ', ''],
         'Julia': ['###', '  ', '###'],
+        'Jython': ['', '#', ''],
         'Kotlin': ['/**', ' * ', ' */'],
         'LLVM': [], # TODO
         'Less': ['/*', '', '*/'],
@@ -263,6 +265,7 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
         'Ruby': ['', '# ', ''],
         'Rust': ['', '// ', ''],
         'SCSS': ['/*', '', '*/'],
+        'Solidity': ['//', '/*...*/', '///'],
         'SQL': ['', '-- ', ''],
         'Sage': [], # TODO
         'Sass': ['/*', '', '*/'],
@@ -282,23 +285,27 @@ MAP_LANGUAGE_TO_COMMENT_CHARS = \
 """
 Argument Parsing
 """
+
+
 class FullPaths(argparse.Action):
     """Expand user- and relative-paths"""
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, os.path.abspath(os.path.expanduser(values)))
 
+
 def is_dir(dirname):
     """Checks if a path is an actual directory"""
     if not os.path.isdir(dirname):
-        msg = "{0} is not a directory".format(dirname)
+        msg = "{} is not a directory".format(dirname)
         raise argparse.ArgumentTypeError(msg)
     else:
         return dirname
 
-
 """
 Utility
 """
+
+
 def query_yes_no(question, default="yes"):
     """Ask a yes/no question via input() and return their answer.
 
@@ -319,7 +326,6 @@ def query_yes_no(question, default="yes"):
         prompt = " [y/N] "
     else:
         raise ValueError("invalid default answer: '%s'" % default)
-
     while True:
         sys.stdout.write(question + prompt)
         choice = input().lower()
@@ -369,10 +375,6 @@ def apply_changes(source_path, skip_log=False):
         for file in not_source_files:
             logging.info('\t - ' + file[0][len(source_path):])
 
-    # print("All the source files")
-    # for file in source_files:
-    #     print('\t -', file[0][len(source_path):])
-
     """
     Detect if License Headers exist
 
@@ -391,11 +393,12 @@ def apply_changes(source_path, skip_log=False):
             files_without_headers.append(file)
 
     if not skip_log:
-        print("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
-        logging.info("\nFound {} source file(s) with existing License headers".format(len(files_with_headers)))
+        print("\nFound {} source file(s) with existing\
+              License headers".format(len(files_with_headers)))
+        logging.info("\nFound {} source file(s) with existing\
+                     License headers".format(len(files_with_headers)))
         for file in files_with_headers:
             logging.info("\t " + file[0][len(source_path):])
-
 
     """
     Prepare comment block for each language
@@ -412,18 +415,21 @@ def apply_changes(source_path, skip_log=False):
         except KeyError:
             languages[lang] = [file]
 
-
     map_language_to_block_comment = {}
 
     for lang in languages:
         try:
             characters = MAP_LANGUAGE_TO_COMMENT_CHARS[lang]
         except KeyError:
-            print("ERROR: Language '{}' not found in MAP_LANGUAGE_TO_COMMENT_CHARS. Please Keep both dictionaries in sync".format(lang))
+            print("ERROR: Language '{}' not found in\
+                  MAP_LANGUAGE_TO_COMMENT_CHARS.\
+                  Please Keep both dictionaries in sync".format(lang))
             continue
 
         if len(characters) != 3:
-            print("ERROR: Language '{}' does not have the required 3 block comment characters. Check MAP_LANGUAGE_TO_COMMENT_CHARS".format(lang))
+            print("ERROR: Language '{}' does not have the required 3 block\
+                  comment characters.\
+                  Check MAP_LANGUAGE_TO_COMMENT_CHARS".format(lang))
             continue
 
         comments = []
@@ -491,9 +497,11 @@ def entry():
     """
     Parse arguments
     """
-    parser = argparse.ArgumentParser(description="Recursively add license headers to source files")
-    parser.add_argument('source_dir', help="Path to the root of the directory containing source files",
-        action=FullPaths, type=is_dir)
+    parser = argparse.ArgumentParser(description="Recursively add license\
+                                     headers to source files")
+    parser.add_argument('source_dir', help="Path to the root of the directory\
+                         containing source files",
+                        action=FullPaths, type=is_dir)
     args = parser.parse_args()
     print("Path detected :", color.BOLD + args.source_dir + color.END)
     current_branch = get_current_branch(args.source_dir)
