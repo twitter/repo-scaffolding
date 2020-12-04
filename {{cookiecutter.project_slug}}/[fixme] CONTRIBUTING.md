@@ -126,11 +126,6 @@ authorship metadata will be preserved.
 We also welcome improvements to the project documentation or to the existing
 docs. Please file an [issue](https://github.com/{{ cookiecutter.github_repo_url }}/issues).
 
-# License 
-
-By contributing your code, you agree to license your contribution under the 
-terms of the APLv2: https://github.com/{{ cookiecutter.github_repo_url }}/blob/master/LICENSE
-
 # Code of Conduct
 
 Read our [Code of Conduct](CODE_OF_CONDUCT.md) for the project.

@@ -95,11 +95,3 @@ Lint all the necessary files in the project. - [Project Homepage](https://github
 * TwitterOSS <opensource [at] twitter [dot] com>
 
 Follow [@TwitterOSS](https://twitter.com/twitteross) on Twitter for updates.
-
-## Security Issues?
-
-Please report sensitive security issues via Twitter's bug-bounty program (https://hackerone.com/twitter) rather than GitHub.
-
-## License
-
-This project is licensed under the terms of the [Apache 2.0](/LICENSE)

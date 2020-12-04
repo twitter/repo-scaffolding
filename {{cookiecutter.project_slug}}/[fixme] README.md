@@ -28,14 +28,4 @@ A full list of [contributors](https://github.com/{{ cookiecutter.github_repo_url
 
 Follow [@TwitterOSS](https://twitter.com/twitteross) on Twitter for updates.
 
-## License
-
-Copyright {{ cookiecutter.release_year }} Twitter, Inc.
-
-Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
-
-## Security Issues?
-
-Please report sensitive security issues via Twitter's bug-bounty program (https://hackerone.com/twitter) rather than GitHub.
-
 ### TODO: Create your own [Awesome README](https://github.com/matiassingers/awesome-readme)!

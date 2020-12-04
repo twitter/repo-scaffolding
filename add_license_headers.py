@@ -2,8 +2,7 @@
 
 """
 Copyright 2018 Twitter, Inc.
-Licensed under the Apache License, Version 2.0
-http://www.apache.org/licenses/LICENSE-2.0
+SPDX-License-Identifier: Apache-2.0
 """
 
 """
@@ -31,8 +30,7 @@ The License Header
 """
 LICENSE_HEADER = """
 Copyright {} Twitter, Inc.
-Licensed under the Apache License, Version 2.0
-http://www.apache.org/licenses/LICENSE-2.0
+SPDX-License-Identifier: Apache-2.0
 """.format(datetime.datetime.now().year).split("\n")
 
 # Comment out non-source extensions e.g. .md
