@@ -165,6 +165,7 @@ MAP_EXTENTION_TO_LANGUAGE = \
         '.sh': 'Shell',
         '.sql': 'SQL',
         '.sty': 'TeX',
+        '.swift': 'Objective-C',
         '.tcc': 'C++',
         '.tex': 'TeX',
         '.thor': 'Ruby',
