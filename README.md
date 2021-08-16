@@ -56,27 +56,34 @@ See [cookiecutter.json](/cookiecutter.json) for all the variables required as in
 ### Notes
  - Make sure to update the `TODO` sections in `README.md` and `CONTRIBUTING.md` after generating the files
 
-## 2. License Headers script
+## 2. License Headers
 
-A [script](add_license_headers.py) to add license headers to all the source files of a project. It is designed to be safe, so do not worry and try it out!
+All source files [must have a license header](http://go/licenseheaders) at the top.
+If you need to add headers to a lot of files, we recommend using the [google/addlicense](https://github.com/google/addlicense) tool.
 
 ## Installation
 
-```
-pip install git+git://github.com/twitter/repo-scaffolding
-```
-
-Or clone the repository and run
-```
-python setup.py install
-```
+Download the [latest release](https://github.com/google/addlicense/releases/latest) for your operating system,
+and place the binary someone in your shell path (like `/usr/local/bin/`).
+Alternately, follow the [instructions for running with Docker](https://github.com/google/addlicense#running-in-a-docker-container).
 
 ## Usage
+
+First, check to see which files addlicense would add headers to:
+
 ```
-$ add_license_headers <path_to_source_dir>
+$ cd <path_to_source_dir>
+$ addlicense -check .
 ```
 
-[![asciicast](https://asciinema.org/a/c6dofWtSSiXXFWRmiGiOYKTa6.png)](https://asciinema.org/a/c6dofWtSSiXXFWRmiGiOYKTa6)
+If that looks right, add the appropriate Twitter headers:
+
+```
+$ addlicense -c "Twitter, Inc." -l "Apache-2.0" -s=only .
+```
+
+If you have third-party source in a `vendor` or `node_modules` directory, you
+can ignore those with the `-ignore` flag to addlicense.
 
 
 ## 3. Linting (repolinter)
