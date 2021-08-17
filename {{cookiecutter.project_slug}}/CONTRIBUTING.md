@@ -128,4 +128,5 @@ docs. Please file an [issue](https://github.com/{{ cookiecutter.github_repo_url 
 
 # Code of Conduct
 
-Read our [Code of Conduct](CODE_OF_CONDUCT.md) for the project.
+Read our [Code of Conduct](https://github.com/twitter/.github/blob/main/code-of-conduct.md)
+for the project.
